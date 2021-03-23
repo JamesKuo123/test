@@ -84,6 +84,7 @@
       },
       methods: {
         getYoutubeVideos() {
+          const vm = this;
           return gapi.client.youtube.search.list({
             "part": [
               "snippet"
@@ -94,7 +95,7 @@
             .then(function (response) {
               console.log("Response", response.result.items);
               const videoArr = response.result.items;
-              this.videoArr = videoArr;
+              vm.videoArr = videoArr;
             },
               function (err) { console.error("Execute error", err); });
         },
