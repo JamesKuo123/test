@@ -92,7 +92,7 @@
             "q": "花藝"
           })
             .then(function (response) {
-              console.log("Response", response);
+              console.log("Response", response.result.items);
               const videoArr = response.result.items;
               this.videoArr = videoArr;
             },
