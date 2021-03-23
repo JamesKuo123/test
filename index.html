@@ -11,8 +11,8 @@
 <body>
   <div id="app">
     <button @click.prevent="getYoutubeVideos">get videos</button>
-    <div v-for='(item, index) in videoIdArr' :key='index'>
-      <iframe :src=`https://www.youtube.com/embed/${item}` frameborder="0"></iframe>
+    <div v-for='(item, index) in videoArr' :key='index'>
+      <iframe :src=`https://www.youtube.com/embed/${item.id.videoId}` frameborder="0"></iframe>
     </div>
 
   </div>
@@ -79,7 +79,7 @@
       el: '#app',
       data() {
         return {
-          videoIdArr: [],
+          videoArr: [],
         };
       },
       methods: {
@@ -94,8 +94,7 @@
             .then(function (response) {
               console.log("Response", response);
               const videoArr = response.result.items;
-              const videoIdArr = videoArr.map((item) => item.id.videoId);
-              this.videoIdArr = videoIdArr;
+              this.videoArr = videoArr;
             },
               function (err) { console.error("Execute error", err); });
         },
