@@ -2,74 +2,127 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>test</title>
-    <link rel="stylesheet" href="./style/all.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>test</title>
+  <link rel="stylesheet" href="./style/all.css">
 </head>
-    
+
 <body>
-    <script src="https://apis.google.com/js/api.js"></script>
-    <script src="https://apis.google.com/js/api.js"></script>
-    <script>
-      /**
-       * Sample JavaScript code for youtube.search.list
-       * See instructions for running APIs Explorer code samples locally:
-       * https://developers.google.com/explorer-help/guides/code_samples#javascript
-       */
-      const YOUR_API_KEY = 'AIzaSyDwBeVT0Nvdb9PSLUYG2wM7nuMYnQzj5Q8';
-      const YOUR_CLIENT_ID = '504820109725-r45b35p3vqrisoksf5rkqeh178odpgj1.apps.googleusercontent.com';
-    
-      function authenticate() {
-        return gapi.auth2.getAuthInstance()
-            .signIn({scope: "https://www.googleapis.com/auth/youtube.force-ssl"})
-            .then(function() { console.log("Sign-in successful"); },
-                  function(err) { console.error("Error signing in", err); });
-      }
-      function loadClient() {
-        gapi.client.setApiKey(YOUR_API_KEY);
-        return gapi.client.load("https://www.googleapis.com/discovery/v1/apis/youtube/v3/rest")
-            .then(function() { console.log("GAPI client loaded for API"); },
-                  function(err) { console.error("Error loading GAPI client for API", err); });
-      }
-      // Make sure the client is loaded and sign-in is complete before calling this method.
-      function execute() {
-        return gapi.client.youtube.search.list({
-          "part": [
-            "snippet"
-          ],
-          "maxResults": 25,
-          "q": "floral tutorial"
-        })
-            .then(function(response) {
-                    // Handle the results here (response.result has the parsed body).
-                    console.log("Response", response);
-                  },
-                  function(err) { console.error("Execute error", err); });
-      }
-      gapi.load("client:auth2", function() {
-        gapi.auth2.init({client_id: YOUR_CLIENT_ID});
-      });
-    </script>
-    <button onclick="authenticate().then(loadClient)">authorize and load</button>
-    <button onclick="execute()">execute</button>
-    
+  <div id="app">
+    <button @click.prevent="getYoutubeVideos">get videos</button>
+    <div v-for='(item, index) in videoArr' :key='index'>
+      <iframe :src=`https://www.youtube.com/embed/${item}` frameborder="0"></iframe>
+    </div>
+
+  </div>
 
 
-    <!-- BS4 -->
-    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
-        integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous">
-        </script>
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
-        integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous">
-        </script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
-        integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous">
-        </script>
-    
-    <!-- js -->
-    <script>
+
+  <!-- Vue -->
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+  <!-- BS4 -->
+  <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
+    integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous">
     </script>
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+    integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous">
+    </script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
+    integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous">
+    </script>
+
+  <!-- youtube api -->
+  <script src="https://apis.google.com/js/api.js"></script>
+
+  <!-- fetch youtube videos -->
+  <!-- <script>
+    const YOUR_API_KEY = 'AIzaSyDwBeVT0Nvdb9PSLUYG2wM7nuMYnQzj5Q8';
+    const YOUR_CLIENT_ID = '504820109725-r45b35p3vqrisoksf5rkqeh178odpgj1.apps.googleusercontent.com';
+
+    function authenticate() {
+      return gapi.auth2.getAuthInstance()
+        .signIn({ scope: "https://www.googleapis.com/auth/youtube.force-ssl" })
+        .then(function () { console.log("Sign-in successful"); },
+          function (err) { console.error("Error signing in", err); });
+    }
+    function loadClient() {
+      gapi.client.setApiKey(YOUR_API_KEY);
+      return gapi.client.load("https://www.googleapis.com/discovery/v1/apis/youtube/v3/rest")
+        .then(function () { console.log("GAPI client loaded for API"); },
+          function (err) { console.error("Error loading GAPI client for API", err); });
+    }
+    function execute() {
+      return gapi.client.youtube.search.list({
+        "part": [
+          "snippet"
+        ],
+        "maxResults": 12,
+        "q": "花藝"
+      })
+        .then(function (response) {
+          // Handle the results here (response.result has the parsed body).
+          console.log("Response", response);
+        },
+          function (err) { console.error("Execute error", err); });
+    }
+    gapi.load("client:auth2", function () {
+      gapi.auth2.init({ client_id: YOUR_CLIENT_ID });
+      authenticate().then(loadClient)
+    });
+  </script> -->
+
+  <!-- Vue js -->
+  <script>
+    new Vue({
+      el: '#app',
+      data() {
+        return {
+          videoIdArr: [],
+        };
+      },
+      methods: {
+        getYoutubeVideos() {
+          return gapi.client.youtube.search.list({
+            "part": [
+              "snippet"
+            ],
+            "maxResults": 12,
+            "q": "花藝"
+          })
+            .then(function (response) {
+              console.log("Response", response);
+              const videoArr = response.result.items;
+              const videoIdArr = videoArr.map((item) => item.id.videoId);
+              this.videoIdArr = videoIdArr;
+            },
+              function (err) { console.error("Execute error", err); });
+        },
+      },
+      created() {
+        const YOUR_API_KEY = 'AIzaSyDwBeVT0Nvdb9PSLUYG2wM7nuMYnQzj5Q8';
+        const YOUR_CLIENT_ID = '504820109725-r45b35p3vqrisoksf5rkqeh178odpgj1.apps.googleusercontent.com';
+        function authenticate() {
+          return gapi.auth2.getAuthInstance()
+            .signIn({ scope: "https://www.googleapis.com/auth/youtube.force-ssl" })
+            .then(function () { console.log("Sign-in successful"); },
+              function (err) { console.error("Error signing in", err); });
+        }
+        function loadClient() {
+          gapi.client.setApiKey(YOUR_API_KEY);
+          return gapi.client.load("https://www.googleapis.com/discovery/v1/apis/youtube/v3/rest")
+            .then(function () { console.log("GAPI client loaded for API"); },
+              function (err) { console.error("Error loading GAPI client for API", err); });
+        }
+
+        gapi.load("client:auth2", function () {
+          gapi.auth2.init({ client_id: YOUR_CLIENT_ID });
+          authenticate().then(loadClient)
+        });
+      },
+    });
+  </script>
 </body>
 
 </html>
