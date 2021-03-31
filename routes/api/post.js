@@ -4,20 +4,32 @@ const mongodb = require("mongodb");
 const router = express.Router();
 
 router.get("/", async (req, res) => {
-  const posts = await loadPostsCollection();
-  res.send(await posts.find({}).toArray());
+  console.log("this is get api");
+  const data = await getMongoDBData();
+  res.send(await data.find({}).toArray());
 });
 
-async function loadPostsCollection() {
-  const mongoUser = 'JamesUser1';
-  const mongoPassword = 'au4a83';
-  const mongoUri = `mongodb+srv://${mongoUser}:${mongoPassword}@jamescluster1.lekmf.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`;
-  const mongoClient = await mongodb.MongoClient.connect(mongoUri, {
+router.post("/", (req, res) => {
+  console.log("this is post api");
+  res.send("this is post api result");
+});
+
+router.delete("/:id", (req, res) => {
+  console.log("this is delete api");
+  res.send("this is delete api result");
+});
+
+const getMongoDBData = async () => {
+  const user = 'JamesUser1';
+  const password = 'au4a83';
+  const uri =
+    `mongodb+srv://${user}:${password}@jamescluster1.lekmf.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`;
+  const client = await mongodb.MongoClient.connect(uri, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
   });
-  const mongoData = mongoClient.db("JamesDatabase1").collection("JamesCollection1");
-  return mongoData;
-}
+  const data = client.db('JamesDatabase1').collection('JamesCollection1');
+  return data;
+};
 
 module.exports = router;
